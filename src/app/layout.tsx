@@ -1,5 +1,7 @@
 import { Inter } from 'next/font/google';
 
+import './globals.css';
+
 const font = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({
@@ -8,7 +10,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-br" className={font.className}>
+    <html lang="pt-br" className={`${font.className} bg-neutral-900`}>
       <body>{children}</body>
     </html>
   );
