@@ -1,3 +1,10 @@
+import { Slider } from '@/components/Slider';
+
+const words = ['Artfy'];
+const descriptions = [
+  'Artfy tranforma suas músicas mais ouvidas em Wallpapers aesthetics'
+];
+
 export default function Page() {
-  return <h1>Artfy</h1>;
+  return <Slider words={words} descriptions={descriptions} />;
 }
