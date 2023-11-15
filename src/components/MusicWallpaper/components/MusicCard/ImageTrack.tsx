@@ -14,6 +14,7 @@ export function ImagemTrack() {
       width={300}
       height={300}
       alt="Picture of the author"
+      className="w-full h-auto"
     />
   );
 }

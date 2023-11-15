@@ -4,19 +4,16 @@ import { PlayerControls } from './PlayerControls';
 
 export function Track() {
   return (
-    <div className="flex-col justify-start gap-2 inline-flex">
+    <div className="w-28 py-2 px-3 rounded-lg bg-[#d9495d] filter backdrop-blur-sm bg-gradient-to-b from-transparent to-black opacity-95">
       <ImagemTrack />
-      <div className="py-3 items-center inline-flex">
-        <div className="self-stretch flex-col gap-1 inline-flex">
-          <div className="self-stretch text-white text-xl font-bold font-['Roboto'] tracking-tight">
+      <div className="py-1 items-center inline-flex">
+        <div className="self-stretch flex-col inline-flex">
+          <div className="text-white text-[0.45rem] font-bold font-['Roboto'] tracking-tight">
             You Rock My World
           </div>
-          <div className="self-stretch text-zinc-400 text-sm font-medium font-['Roboto'] tracking-tight">
+          <div className="self-stretch text-zinc-400 text-[0.39rem] font-medium font-['Roboto'] tracking-tight">
             Michael Jackson
           </div>
-        </div>
-        <div className="w-12 h-12 p-3 justify-center items-center flex">
-          <div className="w-6 h-6 relative flex-col justify-start items-start flex" />
         </div>
       </div>
       <PlayBackBar />
