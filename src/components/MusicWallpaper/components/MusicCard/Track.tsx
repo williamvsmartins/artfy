@@ -1,11 +1,13 @@
+import { ImagemTrack } from './ImageTrack';
 import { PlayBackBar } from './PlaybackBar';
 import { PlayerControls } from './PlayerControls';
 
 export function Track() {
   return (
-    <div className="flex-col justify-start items-center gap-2 inline-flex">
-      <div className="justify-between py-3 items-center inline-flex">
-        <div className="self-stretch flex-col justify-center items-start gap-1 inline-flex">
+    <div className="flex-col justify-start gap-2 inline-flex">
+      <ImagemTrack />
+      <div className="py-3 items-center inline-flex">
+        <div className="self-stretch flex-col gap-1 inline-flex">
           <div className="self-stretch text-white text-xl font-bold font-['Roboto'] tracking-tight">
             You Rock My World
           </div>
