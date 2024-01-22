@@ -10,27 +10,118 @@ interface ZIndexData {
 
 export function MusicWallpaper() {
   const tracks = [
-    { id: 1, title: 'You Rock My World', artist: 'Michael Jackson' },
-    { id: 2, title: 'Thriller', artist: 'Michael Jackson' },
-    { id: 3, title: 'Billie Jean', artist: 'Michael Jackson' },
-    { id: 4, title: 'Beat It', artist: 'Michael Jackson' },
-    { id: 5, title: 'Smooth Criminal', artist: 'Michael Jackson' },
-    { id: 6, title: 'Man in the Mirror', artist: 'Michael Jackson' },
-    { id: 7, title: 'Black Or White', artist: 'Michael Jackson' },
-    { id: 8, title: 'Remember the Time', artist: 'Michael Jackson' },
-    { id: 9, title: 'Heal the World', artist: 'Michael Jackson' },
-    { id: 10, title: 'They Dont Care About Us', artist: 'Michael Jackson' },
-    { id: 11, title: 'Invincible', artist: 'Michael Jackson' },
-    { id: 12, title: 'Can You Feel It', artist: 'Michael Jackson' },
-    { id: 13, title: 'Rock With You', artist: 'Michael Jackson' },
-    { id: 14, title: 'Off the Wall', artist: 'Michael Jackson' },
+    {
+      id: 1,
+      title: 'You Rock My World',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d00001e027359994525d219f64872d3b1'
+    },
+    {
+      id: 2,
+      title: 'Thriller',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Thriller album here
+    },
+    {
+      id: 3,
+      title: 'Billie Jean',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Billie Jean album here
+    },
+    {
+      id: 4,
+      title: 'Beat It',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Beat It album here
+    },
+    {
+      id: 5,
+      title: 'Smooth Criminal',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Smooth Criminal album here
+    },
+    {
+      id: 6,
+      title: 'Man in the Mirror',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Man in the Mirror album here
+    },
+    {
+      id: 7,
+      title: 'Black Or White',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Black Or White album here
+    },
+    {
+      id: 8,
+      title: 'Remember the Time',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Remember the Time album here
+    },
+    {
+      id: 9,
+      title: 'Heal the World',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Heal the World album here
+    },
+    {
+      id: 10,
+      title: 'They Dont Care About Us',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for They Dont Care About Us album here
+    },
+    {
+      id: 11,
+      title: 'Invincible',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Invincible album here
+    },
+    {
+      id: 12,
+      title: 'Can You Feel It',
+      artist: ['Michael Jackson', 'The Jackson 5'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Can You Feel It album here
+    },
+    {
+      id: 13,
+      title: 'Rock With You',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Rock With You album here
+    },
+    {
+      id: 14,
+      title: 'Off the Wall',
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Off the Wall album here
+    },
     {
       id: 15,
       title: 'Dont Stop Til You Get Enough',
-      artist: 'Michael Jackson',
-      shouldRotate: true
+      artist: ['Michael Jackson'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for Dont Stop Til You Get Enough album here
     },
-    { id: 16, title: 'ABC', artist: 'Michael Jackson', shouldRotate: true }
+    {
+      id: 16,
+      title: 'ABC',
+      artist: ['The Jackson 5'],
+      albumImage:
+        'https://i.scdn.co/image/ab67616d000048519365dde25000bb00e2c0443e' // Add the image URL for ABC album here
+    }
   ];
 
   const rotationData: RotationData = {
@@ -82,7 +173,11 @@ export function MusicWallpaper() {
             width: '21%'
           }}
         >
-          <MusicCard />
+          <MusicCard
+            musicName={track.title}
+            artistsName={track.artist}
+            trackImage={track.albumImage}
+          />
         </div>
       ))}
     </div>
