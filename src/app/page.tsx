@@ -1,4 +1,5 @@
 import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 
 import { MusicWallpaper } from '@/components/MusicWallpaper';
 import { Slider } from '@/components/Slider';
@@ -14,7 +15,7 @@ const descriptions = [
 export default async function Page() {
   const session = await getServerSession(authConfig);
 
-  console.log('Session: ', session);
+  if (session) return redirect('/wallpaper');
 
   return (
     <div className="flex flex-col items-center p-6">

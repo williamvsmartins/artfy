@@ -1,5 +1,7 @@
 import { Inter } from 'next/font/google';
 
+import { NextAuthProvider } from './providers';
+
 import './globals.css';
 
 const font = Inter({ subsets: ['latin'] });
@@ -11,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br" className={`${font.className} bg-neutral-900`}>
-      <body>{children}</body>
+      <body>
+        <NextAuthProvider>{children}</NextAuthProvider>
+      </body>
     </html>
   );
 }
