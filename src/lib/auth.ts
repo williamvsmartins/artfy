@@ -2,44 +2,51 @@ import { NextAuthOptions, getServerSession } from 'next-auth';
 import SpotifyProvider from 'next-auth/providers/spotify';
 import { redirect } from 'next/navigation';
 
+import axios from 'axios';
+
 export const authConfig: NextAuthOptions = {
   secret: process.env.NEXTAUTH_URL,
   callbacks: {
     async jwt({ token, account }) {
       const expires_at = token.expires_at as number;
       if (account) {
-        console.log(account);
-        const expires_in = account.expires_at as number;
         return {
           accessToken: account.access_token,
-          expires_at: Math.floor((Date.now() / 1000 + expires_in) as number),
+          expires_at: account.expires_at,
           refresh_token: account.refresh_token
         };
       } else if (Date.now() < expires_at * 1000) {
         return token;
       } else {
         try {
-          const response = await fetch(
+          const response = await axios.post(
             'https://accounts.spotify.com/api/token',
             {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: new URLSearchParams({
-                grant_type: 'refresh_token',
-                refresh_token: token.refresh_token! as string,
-                client_id: process.env.SPOTIFY_CLIENT_ID || ''
-              }),
-              method: 'POST'
+              grant_type: 'refresh_token',
+              refresh_token: token.refresh_token! as string
+            },
+            {
+              headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                Authorization:
+                  'Basic ' +
+                  Buffer.from(
+                    process.env.SPOTIFY_CLIENT_ID +
+                      ':' +
+                      process.env.SPOTIFY_CLIENT_SECRET
+                  ).toString('base64')
+              }
             }
           );
 
-          const tokens = await response.json();
+          const tokens = response.data;
 
-          if (!response.ok) throw tokens;
+          if (response.status != 200) throw tokens;
 
           return {
             ...token,
             accessToken: tokens.access_token,
-            expires_at: Math.floor(Date.now() / 1000 + tokens.expires_at),
+            expires_at: Math.floor(Date.now() / 1000 + tokens.expires_in),
             refresh_token: tokens.refresh_token ?? token.refresh_token
           };
         } catch (error) {
