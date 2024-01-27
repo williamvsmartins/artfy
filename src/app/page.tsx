@@ -9,9 +9,10 @@ import SAMPLE_TRACKS from '../lib/sampleTracks.json';
 
 import { authConfig } from '@/lib/auth';
 import { TrackProps } from '@/services/http/topTrack/types';
-const words = ['Artfy'];
+const words = ['Artfy', 'Exclusiva'];
 const descriptions = [
-  'Artfy transforma suas músicas mais ouvidas em Wallpapers aesthetics'
+  'Artfy transforma suas músicas mais ouvidas em wallpapers aesthetics',
+  'O site analisa seu perfil musical e cria uma arte exclusiva, que reflete seu gosto e humor'
 ];
 
 export default async function Page() {
@@ -23,10 +24,14 @@ export default async function Page() {
   const convertedItems: TrackProps[] = items as TrackProps[];
 
   return (
-    <div className="flex flex-col items-center p-6">
-      <Slider words={words} descriptions={descriptions} />
-      <SpotifySignInButton />
-      {convertedItems && <MusicWallpaper tracks={convertedItems} />}
+    <div>
+      <div className="mx-auto">
+        <Slider words={words} descriptions={descriptions} />
+      </div>
+      <div className="flex flex-col items-center p-6 mx-auto">
+        <SpotifySignInButton />
+        {convertedItems && <MusicWallpaper tracks={convertedItems} />}
+      </div>
     </div>
   );
 }
