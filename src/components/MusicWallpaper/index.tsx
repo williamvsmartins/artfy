@@ -68,6 +68,7 @@ export async function MusicWallpaper({ tracks }: MusicWallpaperProps) {
             musicName={track.name}
             artistsName={track.artists}
             trackImage={track.album.images?.[0].url}
+            dominantColor={track.dominantColor}
           />
         </div>
       ))}

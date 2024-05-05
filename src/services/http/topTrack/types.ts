@@ -51,6 +51,7 @@ export type TrackProps = {
   artists: [AlbumProps];
   duration_ms: number;
   preview_url: string;
+  dominantColor: string;
 };
 
 export type ReturnTrackProps = {
