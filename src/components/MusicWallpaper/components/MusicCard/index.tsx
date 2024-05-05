@@ -18,7 +18,7 @@ export function MusicCard({
   return (
     <div
       style={{ backgroundColor: dominantColor }}
-      className={`w-28 py-2 px-3 rounded-lg filter backdrop-blur-sm bg-gradient-to-b from-transparent to-black opacity-95 `}
+      className={`w-28 py-2 px-3 rounded-lg filter backdrop-blur-sm bg-gradient-to-b from-transparent to-black opacity-95 select-none `}
     >
       {trackImage && <img src={trackImage} width={300} height={300} />}
       <div className="py-1 items-center inline-flex">

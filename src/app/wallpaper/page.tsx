@@ -1,15 +1,18 @@
 import { getServerSession } from 'next-auth';
 import { Session } from 'next-auth';
 
-import { MusicWallpaper } from '@/components/MusicWallpaper';
+import { SwiperWallpaper } from '@/components/SwiperWallpaper';
 
 import { authConfig, loginIsRequiredServer } from '@/lib/auth';
 import { extractDominantColor } from '@/lib/extractDominantColor';
 import { TopTrackService } from '@/services/http/topTrack';
 
-const getTopTrack = async (session: Session | null) => {
+const getTopTrack = async (
+  timeRange: 'long_term' | 'medium_term' | 'short_term',
+  session: Session | null
+) => {
   try {
-    const items = (await TopTrackService.getAll('short_term', session)) ?? [];
+    const items = (await TopTrackService.getAll(timeRange, session)) ?? [];
     for (const item of items) {
       if (item.album.images && item.album.images.length > 0) {
         const imageUrl = item.album.images[0].url as string;
@@ -27,11 +30,21 @@ export default async function Wallpaper() {
   await loginIsRequiredServer();
   const session = await getServerSession(authConfig);
 
-  const topTrack = await getTopTrack(session);
+  const [shortTermTracks, mediumTermTracks, longTermTracks] = await Promise.all(
+    [
+      getTopTrack('short_term', session),
+      getTopTrack('medium_term', session),
+      getTopTrack('long_term', session)
+    ]
+  );
 
   return (
     <div className="flex flex-col items-center p-6">
-      {topTrack && <MusicWallpaper tracks={topTrack} />}
+      <SwiperWallpaper
+        shortTermTracks={shortTermTracks || []}
+        mediumTermTracks={mediumTermTracks || []}
+        longTermTracks={longTermTracks || []}
+      />
     </div>
   );
 }
