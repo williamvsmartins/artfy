@@ -14,7 +14,7 @@ interface MusicWallpaperProps {
   tracks: TrackProps[];
 }
 
-export async function MusicWallpaper({ tracks }: MusicWallpaperProps) {
+export function MusicWallpaper({ tracks }: MusicWallpaperProps) {
   const rotationData: RotationData = {
     1: 0,
     2: 10,
@@ -53,7 +53,7 @@ export async function MusicWallpaper({ tracks }: MusicWallpaperProps) {
     16: 0
   };
   return (
-    <div className="w-80 mx-auto flex flex-wrap overflow-hidden bg-black">
+    <div className="w-80 mx-auto flex flex-wrap rounded-xl overflow-hidden bg-black">
       {tracks.map((track, index) => (
         <div
           key={index}

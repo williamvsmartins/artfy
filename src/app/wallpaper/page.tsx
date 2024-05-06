@@ -39,7 +39,7 @@ export default async function Wallpaper() {
   );
 
   return (
-    <div className="flex flex-col items-center p-6">
+    <div className="flex flex-col items-center p-6 bg-[#FFE818]">
       <SwiperWallpaper
         shortTermTracks={shortTermTracks || []}
         mediumTermTracks={mediumTermTracks || []}
