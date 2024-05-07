@@ -21,7 +21,10 @@ export const TopTrackService = {
           (item) =>
             item.album && item.album.images && item.album.images.length > 0
         )
-        .map((item) => item.album.images![0].url as string);
+        .map(
+          (item) =>
+            item.album.images![item.album.images!.length - 1].url as string
+        );
 
       const dominantColors = await extractDominantColors(imageUrls);
 

@@ -8,7 +8,6 @@ export const extractDominantColors = async (
     return new Promise<string>((resolve, reject) => {
       Jimp.read(imageUrl)
         .then((image) => {
-          image.resize(100, Jimp.AUTO);
           const { data, width, height } = image.bitmap;
           const pixels = Array.from(data);
           extractColors({ data: pixels, width, height })
