@@ -53,11 +53,10 @@ export function MusicWallpaper({ tracks }: MusicWallpaperProps) {
     16: 0
   };
   return (
-    <div className="w-80 mx-auto flex flex-wrap rounded-xl overflow-hidden bg-black">
+    <div className="w-80 flex flex-wrap rounded-xl bg-black">
       {tracks.map((track, index) => (
         <div
           key={index}
-          className="transform"
           style={{
             transform: `rotate(${rotationData[index]}deg)`,
             zIndex: zIndexData[index],

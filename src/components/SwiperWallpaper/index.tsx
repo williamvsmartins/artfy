@@ -51,6 +51,8 @@ export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
           onlyInViewport: false
         }}
         modules={[EffectCards, Keyboard]}
+        resistance={false}
+        slideToClickedSlide={true}
         className="mySwiper w-80 overflow-hidden"
         onSlideChange={(swiper) => handleSlideChange(swiper)}
       >
