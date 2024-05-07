@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import 'swiper/css';
 import 'swiper/css/effect-cards';
 
-import { EffectCards } from 'swiper/modules';
+import { EffectCards, Keyboard } from 'swiper/modules';
 
 import { MusicWallpaper } from '../MusicWallpaper';
 
@@ -43,9 +43,14 @@ export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
       <Swiper
         effect={'cards'}
         loop={true}
+        initialSlide={2}
         grabCursor={true}
         touchMoveStopPropagation={true}
-        modules={[EffectCards]}
+        keyboard={{
+          enabled: true,
+          onlyInViewport: false
+        }}
+        modules={[EffectCards, Keyboard]}
         className="mySwiper w-80 overflow-hidden"
         onSlideChange={(swiper) => handleSlideChange(swiper)}
       >
