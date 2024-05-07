@@ -1,4 +1,5 @@
 'use client';
+import { Session } from 'next-auth';
 import React, { useState } from 'react';
 
 import 'swiper/css';
@@ -8,20 +9,14 @@ import { EffectCards } from 'swiper/modules';
 
 import { MusicWallpaper } from '../MusicWallpaper';
 
-import { TrackProps } from '@/services/http/topTrack/types';
+import { useTopTracks } from '@/hooks/useTopTracks';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 
 interface SwiperWallpaperProps {
-  shortTermTracks: TrackProps[];
-  mediumTermTracks: TrackProps[];
-  longTermTracks: TrackProps[];
+  session: Session | null;
 }
 
-export function SwiperWallpaper({
-  shortTermTracks,
-  mediumTermTracks,
-  longTermTracks
-}: SwiperWallpaperProps) {
+export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
   const [selectedCard, setSelectedCard] = useState('Mês');
 
   const handleSlideChange = (swiper: SwiperClass) => {
@@ -34,6 +29,9 @@ export function SwiperWallpaper({
       setSelectedCard('Ano');
     }
   };
+  const [shortTermTracks, mediumTermTracks, longTermTracks] =
+    useTopTracks(session);
+
   return (
     <div className="flex flex-col items-center p-6">
       <div className="text-center mb-4">
@@ -52,13 +50,19 @@ export function SwiperWallpaper({
         onSlideChange={(swiper) => handleSlideChange(swiper)}
       >
         <SwiperSlide>
-          <MusicWallpaper tracks={shortTermTracks} />
+          {shortTermTracks.data && (
+            <MusicWallpaper tracks={shortTermTracks.data} />
+          )}
         </SwiperSlide>
         <SwiperSlide>
-          <MusicWallpaper tracks={mediumTermTracks} />
+          {mediumTermTracks.data && (
+            <MusicWallpaper tracks={mediumTermTracks.data} />
+          )}
         </SwiperSlide>
         <SwiperSlide>
-          <MusicWallpaper tracks={longTermTracks} />
+          {longTermTracks.data && (
+            <MusicWallpaper tracks={longTermTracks.data} />
+          )}
         </SwiperSlide>
       </Swiper>
     </div>
