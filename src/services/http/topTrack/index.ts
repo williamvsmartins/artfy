@@ -1,6 +1,6 @@
 import { MySessionProps, ReturnTrackProps } from './types';
 
-import { extractDominantColor } from '@/lib/extractDominantColor';
+import { extractDominantColors } from '@/lib/extractDominantColor';
 import api from '@/services/api';
 import axios from 'axios';
 
@@ -16,19 +16,20 @@ export const TopTrackService = {
         }
       );
       const items = response.data.items;
-      const promises = items.map((item) => {
-        if (item.album.images && item.album.images.length > 0) {
-          const imageUrl = item.album.images[0].url as string;
-          return extractDominantColor(imageUrl);
-        }
-      });
+      const imageUrls = items
+        .filter(
+          (item) =>
+            item.album && item.album.images && item.album.images.length > 0
+        )
+        .map((item) => item.album.images![0].url as string);
 
-      const dominantColors = await Promise.all(promises);
+      const dominantColors = await extractDominantColors(imageUrls);
 
       items.forEach((item, index) => {
-        item.dominantColor = dominantColors[index] ?? '';
+        if (item.album.images && item.album.images.length > 0) {
+          item.dominantColor = dominantColors[index];
+        }
       });
-
       return items;
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {

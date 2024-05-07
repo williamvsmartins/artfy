@@ -1,30 +1,33 @@
 import { extractColors } from 'extract-colors';
-import getPixels from 'get-pixels';
+import Jimp from 'jimp';
 
-export const extractDominantColor = async (
-  imageUrl: string
-): Promise<string> => {
-  return new Promise<string>((resolve, reject) => {
-    getPixels(imageUrl, (err, pixels) => {
-      if (err) {
-        console.error('Error extracting pixels:', err);
-        reject(err);
-      } else {
-        const data = Array.from(pixels.data);
-        const width = Math.round(Math.sqrt(data.length / 4));
-        const height = width;
-
-        extractColors({ data, width, height })
-          .then((colors) => {
-            resolve(chooseMostSaturatedColor(colors.map((color) => color.hex)));
-          })
-          .catch((error) => {
-            console.error('Error extracting colors:', error);
-            reject(error);
-          });
-      }
+export const extractDominantColors = async (
+  imageUrls: string[]
+): Promise<string[]> => {
+  const promises = imageUrls.map((imageUrl) => {
+    return new Promise<string>((resolve, reject) => {
+      Jimp.read(imageUrl)
+        .then((image) => {
+          image.resize(100, Jimp.AUTO);
+          const { data, width, height } = image.bitmap;
+          const pixels = Array.from(data);
+          extractColors({ data: pixels, width, height })
+            .then((colors) => {
+              resolve(
+                chooseMostSaturatedColor(colors.map((color) => color.hex))
+              );
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   });
+
+  return Promise.all(promises);
 };
 
 const hexToRgb = (hex: string) => {
