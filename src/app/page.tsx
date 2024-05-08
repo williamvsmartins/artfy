@@ -2,9 +2,7 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 import { Footer } from '@/components/Footer';
-import { MusicWallpaper } from '@/components/MusicWallpaper';
 import { Slider } from '@/components/Slider';
-import { SpotifySignInButton } from '@/components/SpotifySignInButton';
 
 import SAMPLE_TRACKS from '../lib/sampleTracks.json';
 
@@ -27,12 +25,13 @@ export default async function Page() {
   return (
     <div>
       <div className="mx-auto">
-        <Slider words={words} descriptions={descriptions} />
+        <Slider
+          words={words}
+          descriptions={descriptions}
+          tracks={convertedItems}
+        />
       </div>
-      <div className="flex flex-col items-center p-6 mx-auto">
-        <SpotifySignInButton />
-        {convertedItems && <MusicWallpaper tracks={convertedItems} />}
-      </div>
+
       <Footer />
     </div>
   );
