@@ -68,6 +68,7 @@ export function MusicWallpaper({ tracks }: MusicWallpaperProps) {
             artistsName={track.artists}
             trackImage={track.album.images?.[0].url}
             dominantColor={track.dominantColor}
+            audioUrl={track.preview_url}
           />
         </div>
       ))}
