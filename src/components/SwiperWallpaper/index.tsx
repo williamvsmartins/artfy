@@ -38,7 +38,15 @@ export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
         <p className="font-bold">
           Esse wallpaper reflete seu gosto e seu humor do último
         </p>
-        <h1 className="text-6xl font-bold text-center py-8">{selectedCard}</h1>
+        <h1
+          style={{
+            WebkitTextStrokeWidth: '1px',
+            WebkitTextStrokeColor: 'black'
+          }}
+          className="text-6xl font-sans font-bold text-center py-8 text-transparent"
+        >
+          {selectedCard}
+        </h1>
       </div>
       <Swiper
         effect={'cards'}
