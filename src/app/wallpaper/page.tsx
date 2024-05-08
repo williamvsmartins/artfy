@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth';
 
+import { Header } from '@/components/Header';
 import { SwiperWallpaper } from '@/components/SwiperWallpaper';
 
 import { authConfig, loginIsRequiredServer } from '@/lib/auth';
@@ -30,6 +31,7 @@ export default async function Wallpaper() {
   return (
     <div className="min-h-screen flex flex-col items-center p-6 bg-[#FFE818]">
       <HydrationBoundary state={dehydrate(queryClient)}>
+        <Header />
         <SwiperWallpaper session={session} />
       </HydrationBoundary>
     </div>
