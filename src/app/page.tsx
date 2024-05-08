@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
+import { Footer } from '@/components/Footer';
 import { MusicWallpaper } from '@/components/MusicWallpaper';
 import { Slider } from '@/components/Slider';
 import { SpotifySignInButton } from '@/components/SpotifySignInButton';
@@ -32,6 +33,7 @@ export default async function Page() {
         <SpotifySignInButton />
         {convertedItems && <MusicWallpaper tracks={convertedItems} />}
       </div>
+      <Footer />
     </div>
   );
 }
