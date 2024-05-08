@@ -35,7 +35,7 @@ export type AlbumProps = {
   id: string;
   name: string;
   artists: [AlbumProps];
-  images?: [ImageProps];
+  images?: ImageProps[];
   album_type?: string;
   release_date?: string;
   tracks?: {
