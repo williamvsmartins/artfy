@@ -34,7 +34,7 @@ export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
 
   return (
     <div className="flex flex-col items-center p-6 overflow-hidden">
-      <div className="text-center mb-4">
+      <div className="text-center -mb-12 md:mb-4 ">
         <p className="font-bold">
           Esse wallpaper reflete seu gosto e seu humor do último
         </p>
@@ -60,7 +60,7 @@ export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
         modules={[EffectCards, Keyboard]}
         resistance={false}
         slideToClickedSlide={true}
-        className="mySwiper w-80 overflow-hidden"
+        className="scale-[.80] mySwiper w-80 overflow-hidden md:scale-100"
         onSlideChange={(swiper) => handleSlideChange(swiper)}
       >
         <SwiperSlide>
