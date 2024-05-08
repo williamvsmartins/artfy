@@ -51,7 +51,6 @@ export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
       <Swiper
         effect={'cards'}
         loop={true}
-        initialSlide={2}
         grabCursor={true}
         touchMoveStopPropagation={true}
         keyboard={{
