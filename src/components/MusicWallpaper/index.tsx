@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { MusicCard } from './components/MusicCard';
 
 import { TrackProps } from '@/services/http/topTrack/types';
@@ -15,6 +17,7 @@ interface MusicWallpaperProps {
 }
 
 export function MusicWallpaper({ tracks }: MusicWallpaperProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const rotationData: RotationData = {
     1: 0,
     2: 10,
@@ -52,16 +55,29 @@ export function MusicWallpaper({ tracks }: MusicWallpaperProps) {
     15: 2,
     16: 0
   };
+
+  const handleMouseEnter = (index: number) => {
+    setHoveredIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+  };
   return (
     <div className="w-80 flex flex-wrap rounded-xl bg-black">
       {tracks.map((track, index) => (
         <div
           key={index}
           style={{
-            transform: `rotate(${rotationData[index]}deg)`,
-            zIndex: zIndexData[index],
-            width: '21%'
+            transform: `rotate(${
+              hoveredIndex === index ? 0 : rotationData[index]
+            }deg) scale(${hoveredIndex === index ? 1.9 : 1})`,
+            zIndex: hoveredIndex === index ? 3 : zIndexData[index],
+            width: '21%',
+            transition: 'transform 0.4s ease'
           }}
+          onMouseEnter={() => handleMouseEnter(index)}
+          onMouseLeave={handleMouseLeave}
         >
           <MusicCard
             musicName={track.name}
