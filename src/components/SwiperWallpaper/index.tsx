@@ -33,7 +33,7 @@ export function SwiperWallpaper({ session }: SwiperWallpaperProps) {
     useTopTracks(session);
 
   return (
-    <div className="flex flex-col items-center p-6">
+    <div className="flex flex-col items-center p-6 overflow-hidden">
       <div className="text-center mb-4">
         <p className="font-bold">
           Esse wallpaper reflete seu gosto e seu humor do último
