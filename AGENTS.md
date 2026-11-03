@@ -13,6 +13,7 @@ Artfy (`williamvsmartins/artfy`) é um projeto pessoal: o usuário entra com a c
 | Imagem       | jimp + extract-colors para a cor dominante da capa (roda no server)       |
 | Carrossel    | Swiper 11                                                                 |
 | Pacotes      | npm (`package-lock.json`). Não introduzir yarn ou pnpm                    |
+| Runtime      | Node 26 (`engines` no `package.json`; a Vercel descontinuou o Node 20)    |
 
 ## Comandos
 
