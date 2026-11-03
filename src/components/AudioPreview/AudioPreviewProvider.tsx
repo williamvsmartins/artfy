@@ -10,8 +10,11 @@ import {
 
 import {
   CROSSFADE_MS,
+  LEAVE_GRACE_MS,
+  PREFETCH_CONCURRENCY,
   SOUND_STORAGE_KEY,
   fadeVolume,
+  pendingSources,
   previewSrc
 } from '@/lib/audio/gesture';
 import type { Track } from '@/types/track';
@@ -59,10 +62,17 @@ class PreviewPlayer {
   private fades = new Map<HTMLAudioElement, number>();
   private requestId = 0;
   private unavailable = new Set<string>();
+  private blobs = new Map<string, string>();
+  private loading = new Set<string>();
+  private queue: string[] = [];
+  private inFlight = 0;
+  private stopTimer?: ReturnType<typeof setTimeout>;
 
   constructor(private store: PreviewStore) {}
 
   attach() {
+    window.addEventListener('pointerdown', this.grantActivation);
+    window.addEventListener('keydown', this.grantActivation);
     this.players = [new Audio(), new Audio()];
     this.players.forEach((audio) => {
       audio.preload = 'none';
@@ -84,7 +94,10 @@ class PreviewPlayer {
     });
     try {
       if (window.localStorage.getItem(SOUND_STORAGE_KEY) === '1') {
-        this.store.set({ soundEnabled: true });
+        this.store.set({
+          soundEnabled: true,
+          needsActivation: navigator.userActivation?.hasBeenActive === false
+        });
       }
     } catch {
       return;
@@ -92,6 +105,12 @@ class PreviewPlayer {
   }
 
   detach() {
+    window.removeEventListener('pointerdown', this.grantActivation);
+    window.removeEventListener('keydown', this.grantActivation);
+    clearTimeout(this.stopTimer);
+    this.queue = [];
+    this.blobs.forEach((url) => URL.revokeObjectURL(url));
+    this.blobs.clear();
     this.fades.forEach((frame) => cancelAnimationFrame(frame));
     this.players.forEach((audio) => {
       audio.pause();
@@ -117,7 +136,59 @@ class PreviewPlayer {
     this.fades.set(audio, requestAnimationFrame(step));
   }
 
+  prefetch(tracks: Track[]) {
+    const connection = (
+      navigator as Navigator & { connection?: { saveData?: boolean } }
+    ).connection;
+    if (!this.store.state.soundEnabled || connection?.saveData) return;
+
+    const known = new Set([
+      ...Array.from(this.blobs.keys()),
+      ...Array.from(this.loading),
+      ...Array.from(this.unavailable)
+    ]);
+    const fresh = pendingSources(tracks.map(previewSrc), known);
+    this.queue = [
+      ...fresh,
+      ...this.queue.filter((src) => !fresh.includes(src))
+    ];
+    this.pump();
+  }
+
+  private pump() {
+    while (this.inFlight < PREFETCH_CONCURRENCY && this.queue.length > 0) {
+      const src = this.queue.shift()!;
+      this.inFlight++;
+      this.loading.add(src);
+      fetch(src)
+        .then((response) => {
+          if (response.status === 404) this.unavailable.add(src);
+          if (!response.ok) return;
+          return response.blob().then((blob) => {
+            this.blobs.set(src, URL.createObjectURL(blob));
+          });
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          this.inFlight--;
+          this.loading.delete(src);
+          this.pump();
+        });
+    }
+  }
+
+  isPlaying() {
+    return this.store.state.currentId !== null;
+  }
+
+  scheduleStop(trackId: string) {
+    clearTimeout(this.stopTimer);
+    this.stopTimer = setTimeout(() => this.stop(trackId), LEAVE_GRACE_MS);
+  }
+
   play(track: Track) {
+    clearTimeout(this.stopTimer);
+    if (this.store.state.currentId === track.id) return;
     const src = previewSrc(track);
     if (
       !src ||
@@ -133,7 +204,8 @@ class PreviewPlayer {
     this.active = 1 - this.active;
     const next = this.players[this.active];
 
-    next.src = src;
+    next.dataset.src = src;
+    next.src = this.blobs.get(src) ?? src;
     next.volume = 0;
     this.store.set({
       currentId: track.id,
@@ -143,7 +215,7 @@ class PreviewPlayer {
     });
 
     const onError = () => {
-      if (next.src !== new URL(src, window.location.href).href) return;
+      if (next.dataset.src !== src) return;
       this.unavailable.add(src);
       if (this.store.state.currentId === track.id) {
         this.store.set({ currentId: null, color: null });
@@ -178,7 +250,17 @@ class PreviewPlayer {
     if (audio) this.fade(audio, 0, () => audio.pause());
   }
 
+  private grantActivation = () => {
+    if (this.store.state.needsActivation) {
+      this.store.set({ needsActivation: false });
+    }
+  };
+
   toggleSound() {
+    if (this.store.state.needsActivation) {
+      this.grantActivation();
+      return;
+    }
     const enabled = !this.store.state.soundEnabled;
     const { currentId } = this.store.state;
     if (!enabled && currentId) this.stop(currentId);
@@ -245,7 +327,9 @@ export function useAudioPreview() {
       needsActivation,
       toggleSound: () => player.toggleSound(),
       play: (track: Track) => player.play(track),
-      stop: (trackId: string) => player.stop(trackId)
+      stop: (trackId: string) => player.stop(trackId),
+      scheduleStop: (trackId: string) => player.scheduleStop(trackId),
+      isPlaying: () => player.isPlaying()
     }),
     [player, soundEnabled, needsActivation]
   );
@@ -271,4 +355,15 @@ export function useCurrentTrackColor() {
 
 export function usePreviewStore() {
   return usePreviewContext().store;
+}
+
+export function usePrefetchPreviews(tracks: Track[], enabled = true) {
+  const { player } = usePreviewContext();
+  const soundEnabled = usePreviewState((state) => state.soundEnabled);
+
+  useEffect(() => {
+    if (!enabled || !soundEnabled) return;
+    const timer = setTimeout(() => player.prefetch(tracks), 300);
+    return () => clearTimeout(timer);
+  }, [player, tracks, enabled, soundEnabled]);
 }

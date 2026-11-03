@@ -3,7 +3,11 @@ import { useAudioPreview } from './AudioPreviewProvider';
 
 export function SoundToggle() {
   const { soundEnabled, needsActivation, toggleSound } = useAudioPreview();
-  const label = soundEnabled ? 'Desativar som' : 'Ativar som';
+  const label = needsActivation
+    ? 'Toque para ouvir'
+    : soundEnabled
+    ? 'Desativar som'
+    : 'Ativar som';
 
   return (
     <button
@@ -41,7 +45,11 @@ export function SoundToggle() {
         )}
       </svg>
       <span className="hidden sm:inline">
-        {soundEnabled ? 'Som ligado' : 'Ativar som'}
+        {needsActivation
+          ? 'Toque para ouvir'
+          : soundEnabled
+          ? 'Som ligado'
+          : 'Ativar som'}
       </span>
     </button>
   );

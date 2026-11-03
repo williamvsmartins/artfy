@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useAudioPreview } from './AudioPreviewProvider';
 
-import { HOLD_MS, HOVER_INTENT_MS, isHoldCancelled } from '@/lib/audio/gesture';
+import { HOLD_MS, hoverDelay, isHoldCancelled } from '@/lib/audio/gesture';
 import type { Track } from '@/types/track';
 
 export function usePreviewGesture(track: Track) {
-  const { play, stop } = useAudioPreview();
+  const { play, stop, scheduleStop, isPlaying } = useAudioPreview();
   const [active, setActive] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>();
   const origin = useRef<{ x: number; y: number } | null>(null);
@@ -31,11 +31,12 @@ export function usePreviewGesture(track: Track) {
     onPointerEnter: (event: React.PointerEvent) => {
       if (event.pointerType !== 'mouse') return;
       clearTimer();
-      timer.current = setTimeout(() => play(track), HOVER_INTENT_MS);
+      timer.current = setTimeout(() => play(track), hoverDelay(isPlaying()));
     },
     onPointerLeave: (event: React.PointerEvent) => {
       if (event.pointerType !== 'mouse') return;
-      release();
+      clearTimer();
+      scheduleStop(track.id);
     },
     onPointerDown: (event: React.PointerEvent) => {
       if (event.pointerType === 'mouse') return;

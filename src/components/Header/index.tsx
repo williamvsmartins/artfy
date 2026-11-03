@@ -3,23 +3,18 @@ import { signOut } from 'next-auth/react';
 import { MdLogout } from 'react-icons/md';
 
 export function Header() {
-  const logout = () => {
-    signOut({ callbackUrl: '/' });
-  };
-
   return (
-    <header className="top-0 flex items-center justify-center w-full p-4">
-      <div className="flex items-center justify-center">
-        <h1 className="text-center text-6xl font-bold">Artfy</h1>
-      </div>
-      <div className="absolute right-10">
-        <button
-          className="flex items-center justify-center bg-black bg-opacity-80 rounded-full h-10 w-10 hover:bg-[#181818] focus:outline-none cursor-pointer"
-          onClick={logout}
-        >
-          <MdLogout color="#fff" fontSize={24} />
-        </button>
-      </div>
+    <header className="flex w-full items-center justify-between px-2 py-2">
+      <span className="text-3xl font-extrabold">Artfy</span>
+      <button
+        type="button"
+        aria-label="Sair"
+        title="Sair"
+        onClick={() => signOut({ callbackUrl: '/' })}
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-black/80 hover:bg-black focus:outline-none focus-visible:ring-2 focus-visible:ring-black"
+      >
+        <MdLogout color="#fff" fontSize={22} />
+      </button>
     </header>
   );
 }

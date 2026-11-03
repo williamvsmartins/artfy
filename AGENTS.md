@@ -44,7 +44,8 @@ Artfy (`williamvsmartins/artfy`) é um projeto pessoal: o usuário entra com a c
 
 - Server component por padrão. `'use client'` só no menor componente que usa hook, evento ou API do navegador.
 - Dados de música chegam ao client por props do server já como `Track`. O client não chama Spotify nem Deezer direto; o token do Spotify só é lido no server, e a sessão expõe apenas `accessToken` e `error`.
-- Áudio só pelo `AudioPreviewProvider` (dois `<audio>` com crossfade). O `src` é sempre `/api/preview/<previewKey>`, porque as URLs do Deezer expiram em ~20 min.
+- Áudio só pelo `AudioPreviewProvider` (dois `<audio>` com crossfade). O `src` é sempre `/api/preview/<previewKey>`, porque as URLs do Deezer expiram em ~20 min. Os trechos do wallpaper visível são baixados antes (blob, 3 por vez, só com som ligado e sem economia de dados) para a troca no hover ser imediata; ao sair do card a música segue por 250 ms e cruza com a próxima. O navegador só libera áudio depois de um clique ou tecla na página: com som salvo como ligado e sem interação, o botão mostra "Toque para ouvir".
+- Wallpapers ficam dentro de `FitToViewport`: em telas ≥1024 px a escala cabe na altura da janela; abaixo disso, na largura. Títulos vazados (`.text-outline`) usam Inter estático de `src/fonts`, porque o `-webkit-text-stroke` desenha as sobreposições internas da fonte variável.
 - Hover e escala dos cards ficam em CSS (`.wall-card` em `globals.css`), não em estado React; só o card tocando re-renderiza.
 - Estado lido de `localStorage` ou de um store externo não pode aparecer no HTML do servidor: use `INITIAL_STATE` no `getServerSnapshot`.
 - Imports são ordenados pelo `import-helpers/order-imports` do `.eslintrc.json`; rode `npm run lint:fix` em vez de ordenar na mão.

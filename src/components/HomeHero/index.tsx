@@ -7,6 +7,7 @@ import 'swiper/css/effect-cards';
 import { EffectCards, Keyboard } from 'swiper/modules';
 
 import { CardBack } from '../CardBack';
+import { FitToViewport } from '../FitToViewport';
 import { MusicWallpaper } from '../MusicWallpaper';
 import { SpotifySignInButton } from '../SpotifySignInButton';
 import { StoryPreview } from '../StoryPreview';
@@ -15,6 +16,7 @@ import type { Track } from '@/types/track';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 const HIDDEN_CARDS = ['SEU MÊS', 'SEU SEMESTRE', 'SEU ANO'];
+const HOME_RESERVE_PX = 150;
 
 interface HomeHeroProps {
   chart: Track[] | null;
@@ -22,8 +24,8 @@ interface HomeHeroProps {
 
 export function HomeHero({ chart }: HomeHeroProps) {
   return (
-    <section className="mx-auto flex max-w-6xl flex-col items-center gap-10 px-4 py-10 md:flex-row md:items-center md:justify-between md:gap-8">
-      <div className="flex max-w-sm flex-col items-center gap-5 text-center md:items-start md:text-left">
+    <section className="mx-auto flex min-h-screen max-w-6xl flex-col items-center gap-10 px-4 py-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+      <div className="flex max-w-sm flex-col items-center gap-5 text-center lg:items-start lg:text-left">
         <span className="text-sm font-bold uppercase tracking-[0.3em] text-lime-300">
           Artfy
         </span>
@@ -47,29 +49,31 @@ export function HomeHero({ chart }: HomeHeroProps) {
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        <Swiper
-          effect={'cards'}
-          grabCursor={true}
-          keyboard={{ enabled: true }}
-          modules={[EffectCards, Keyboard]}
-          className="w-80 !-my-16 !py-16"
-        >
-          <SwiperSlide>
-            {chart ? (
-              <div className="flex flex-col items-center gap-2">
-                <MusicWallpaper tracks={chart} eager />
-              </div>
-            ) : (
-              <CardBack title="O BRASIL AGORA" />
-            )}
-          </SwiperSlide>
-          {HIDDEN_CARDS.map((title) => (
-            <SwiperSlide key={title}>
-              <CardBack title={title} />
+        <FitToViewport reserve={HOME_RESERVE_PX}>
+          <Swiper
+            effect={'cards'}
+            grabCursor={true}
+            keyboard={{ enabled: true }}
+            modules={[EffectCards, Keyboard]}
+            className="w-80"
+          >
+            <SwiperSlide>
+              {chart ? (
+                <div className="flex flex-col items-center gap-2">
+                  <MusicWallpaper tracks={chart} eager prefetch />
+                </div>
+              ) : (
+                <CardBack title="O BRASIL AGORA" />
+              )}
             </SwiperSlide>
-          ))}
-        </Swiper>
-        <p className="text-center text-sm font-semibold text-neutral-300">
+            {HIDDEN_CARDS.map((title) => (
+              <SwiperSlide key={title}>
+                <CardBack title={title} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </FitToViewport>
+        <p className="mt-4 text-center text-sm font-semibold text-neutral-300">
           <span className="text-lime-300">O BRASIL AGORA</span> ·{' '}
           <span className="hidden [@media(hover:hover)]:inline">
             passe o mouse numa capa para ouvir

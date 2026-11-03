@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { fadeVolume, isHoldCancelled, previewSrc } from './gesture.ts';
+import {
+  HOVER_INTENT_MS,
+  LEAVE_GRACE_MS,
+  fadeVolume,
+  hoverDelay,
+  isHoldCancelled,
+  pendingSources,
+  previewSrc
+} from './gesture.ts';
 
 test('fadeVolume é linear e limitado', () => {
   assert.equal(fadeVolume(0, 300, 0, 1), 0);
@@ -22,4 +30,17 @@ test('previewSrc', () => {
     '/api/preview/deezer:1?q=Anitta%20Envolver'
   );
   assert.equal(previewSrc({ previewKey: null, artists: [], name: 'x' }), null);
+});
+
+test('hoverDelay troca rápido quando algo já toca', () => {
+  assert.equal(hoverDelay(false), HOVER_INTENT_MS);
+  assert.ok(hoverDelay(true) < HOVER_INTENT_MS);
+  assert.ok(LEAVE_GRACE_MS > hoverDelay(true));
+});
+
+test('pendingSources ignora repetidos e já conhecidos', () => {
+  assert.deepEqual(pendingSources(['a', 'b', 'a', null, 'c'], new Set(['b'])), [
+    'a',
+    'c'
+  ]);
 });

@@ -2,6 +2,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
+import { usePrefetchPreviews } from '@/components/AudioPreview/AudioPreviewProvider';
+
 import { MusicWallpaper } from '../MusicWallpaper';
 import { ShareButton } from '../ShareButton';
 import { SearchResults } from './SearchResults';
@@ -12,6 +14,7 @@ import type { Track } from '@/types/track';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 const SEARCH_DEBOUNCE_MS = 300;
+const EMPTY: Track[] = [];
 
 const deezerId = (track: Track) => track.id.replace('deezer:', '');
 
@@ -64,6 +67,8 @@ export function BuildWallpaper({
     enabled: ids.length > 0,
     placeholderData: keepPreviousData
   });
+
+  usePrefetchPreviews(search.data ?? EMPTY);
 
   const displayTracks = useMemo(() => {
     const colors = new Map(
@@ -175,7 +180,7 @@ export function BuildWallpaper({
           {shareTitle}
         </h1>
         {displayTracks.length > 0 ? (
-          <MusicWallpaper tracks={displayTracks} eager />
+          <MusicWallpaper tracks={displayTracks} eager prefetch />
         ) : (
           <div className="flex min-h-[20rem] w-80 items-center justify-center rounded-xl bg-black p-8 text-center font-bold text-white">
             Busque e adicione músicas para montar seu wallpaper

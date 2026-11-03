@@ -38,7 +38,7 @@ export default async function Wallpaper() {
   return (
     <TintedBackground
       base="#FFE818"
-      className="min-h-screen flex flex-col items-center p-6"
+      className="min-h-screen overflow-x-clip flex flex-col items-center px-4 py-3 lg:px-8"
     >
       <Header />
       <SwiperWallpaper periods={periods} />

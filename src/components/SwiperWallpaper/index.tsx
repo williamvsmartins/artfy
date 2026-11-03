@@ -7,6 +7,7 @@ import 'swiper/css/effect-cards';
 import { EffectCards, Keyboard } from 'swiper/modules';
 
 import { CardBack } from '../CardBack';
+import { FitToViewport } from '../FitToViewport';
 import { FlipCard } from '../FlipCard';
 import { MusicWallpaper } from '../MusicWallpaper';
 import { PeriodTabs } from '../PeriodTabs';
@@ -23,6 +24,7 @@ import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 
 const REVEAL_DELAY_MS = 300;
 const REVEAL_STAGGER_MS = 120;
+const WIDE_RESERVE_PX = 150;
 
 interface SwiperWallpaperProps {
   periods: { period: Period; tracks: Track[] }[];
@@ -45,63 +47,72 @@ export function SwiperWallpaper({ periods }: SwiperWallpaperProps) {
 
   const activePeriod = periods[activeIndex]?.period ?? 'short_term';
 
+  const share = (
+    <ShareButton
+      href={`/api/share?period=${activePeriod}`}
+      fileName={`artfy-${PERIOD_SLUG[activePeriod]}.png`}
+      disabled={(periods[activeIndex]?.tracks.length ?? 0) === 0}
+    />
+  );
+
   return (
-    <div className="flex flex-col items-center p-6 overflow-hidden">
-      <div className="flex flex-col items-center text-center -mb-12 md:mb-4">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center gap-6 px-2 lg:flex-row lg:justify-center lg:gap-20">
+      <div className="flex flex-col items-center gap-4 text-center lg:max-w-sm lg:items-start lg:text-left">
         <p className="font-bold">
           Esse wallpaper reflete seu gosto e seu humor do último
         </p>
-        <h1 className="text-outline text-6xl font-bold py-6">
+        <h1 className="text-outline text-6xl font-bold lg:text-8xl">
           {PERIOD_LABEL[activePeriod]}
         </h1>
         <PeriodTabs
           value={activeIndex}
           onChange={(index) => swiperRef.current?.slideToLoop(index)}
         />
+        <div className="mt-4 hidden lg:block">{share}</div>
       </div>
-      <Swiper
-        effect={'cards'}
-        loop={true}
-        grabCursor={true}
-        touchMoveStopPropagation={true}
-        keyboard={{ enabled: true, onlyInViewport: false }}
-        modules={[EffectCards, Keyboard]}
-        resistance={false}
-        slideToClickedSlide={true}
-        className="scale-[.80] w-80 overflow-hidden md:scale-100 md:mt-6"
-        onSwiper={(swiper) => {
-          swiperRef.current = swiper;
-        }}
-        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-      >
-        {periods.map(({ period, tracks }, index) => (
-          <SwiperSlide
-            key={period}
-            className="[&:not(.swiper-slide-active)]:pointer-events-none"
-          >
-            <FlipCard
-              flipped={revealed > index}
-              back={<CardBack title={PERIOD_TITLE[period]} />}
-              front={
-                tracks.length > 0 ? (
-                  <MusicWallpaper tracks={tracks} eager={index === 0} />
-                ) : (
-                  <div className="flex min-h-[26rem] w-80 items-center justify-center rounded-xl bg-black p-8 text-center text-lg font-bold text-white">
-                    Ouça mais um pouco e volte aqui
-                  </div>
-                )
-              }
-            />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <div className="mt-4 md:mt-8">
-        <ShareButton
-          href={`/api/share?period=${activePeriod}`}
-          fileName={`artfy-${PERIOD_SLUG[activePeriod]}.png`}
-          disabled={(periods[activeIndex]?.tracks.length ?? 0) === 0}
-        />
-      </div>
+      <FitToViewport reserve={WIDE_RESERVE_PX}>
+        <Swiper
+          effect={'cards'}
+          loop={true}
+          grabCursor={true}
+          touchMoveStopPropagation={true}
+          keyboard={{ enabled: true, onlyInViewport: false }}
+          modules={[EffectCards, Keyboard]}
+          resistance={false}
+          slideToClickedSlide={true}
+          className="w-80"
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+        >
+          {periods.map(({ period, tracks }, index) => (
+            <SwiperSlide
+              key={period}
+              className="[&:not(.swiper-slide-active)]:pointer-events-none"
+            >
+              <FlipCard
+                flipped={revealed > index}
+                back={<CardBack title={PERIOD_TITLE[period]} />}
+                front={
+                  tracks.length > 0 ? (
+                    <MusicWallpaper
+                      tracks={tracks}
+                      eager={index === 0}
+                      prefetch={index === activeIndex}
+                    />
+                  ) : (
+                    <div className="flex min-h-[26rem] w-80 items-center justify-center rounded-xl bg-black p-8 text-center text-lg font-bold text-white">
+                      Ouça mais um pouco e volte aqui
+                    </div>
+                  )
+                }
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </FitToViewport>
+      <div className="lg:hidden">{share}</div>
     </div>
   );
 }
