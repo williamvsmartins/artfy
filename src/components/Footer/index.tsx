@@ -36,6 +36,13 @@ export function Footer({ black = false }: FooterProps) {
           Spotify é uma marca registrada da Spotify AB. Artfy não está associado
           ao Spotify.
         </p>
+        <p
+          className={`mt-2 font-extralight text-left ${
+            black ? 'text-black' : 'text-white'
+          }`}
+        >
+          Prévias de áudio e busca fornecidas pelo Deezer.
+        </p>
       </div>
     </div>
   );

@@ -56,7 +56,10 @@ export const authConfig: NextAuthOptions = {
       }
     },
     async session({ session, token }) {
-      session.user = token;
+      session.user = {
+        accessToken: token.accessToken as string | undefined,
+        error: token.error as 'RefreshAccessTokenError' | undefined
+      };
       return session;
     }
   },

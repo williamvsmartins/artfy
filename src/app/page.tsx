@@ -1,38 +1,25 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
+import { SoundToggle } from '@/components/AudioPreview/SoundToggle';
+import { TintedBackground } from '@/components/AudioPreview/TintedBackground';
 import { Footer } from '@/components/Footer';
-import { Slider } from '@/components/Slider';
-
-import SAMPLE_TRACKS from '../lib/sampleTracks.json';
+import { HomeHero } from '@/components/HomeHero';
 
 import { authConfig } from '@/lib/auth';
-import { TrackProps } from '@/services/http/topTrack/types';
-const words = ['Artfy', 'Exclusiva'];
-const descriptions = [
-  'Artfy transforma suas músicas mais ouvidas em wallpapers aesthetics',
-  'O site analisa seu perfil musical e cria uma arte exclusiva, que reflete seu gosto e humor'
-];
+import { getChartTracks } from '@/lib/tracks/catalog';
 
 export default async function Page() {
   const session = await getServerSession(authConfig);
-
   if (session) return redirect('/wallpaper');
 
-  const items: unknown = SAMPLE_TRACKS.items;
-  const convertedItems: TrackProps[] = items as TrackProps[];
+  const chart = await getChartTracks();
 
   return (
-    <div>
-      <div className="mx-auto">
-        <Slider
-          words={words}
-          descriptions={descriptions}
-          tracks={convertedItems}
-        />
-      </div>
-
+    <TintedBackground base="#171717" className="min-h-screen overflow-x-clip">
+      <HomeHero chart={chart} />
       <Footer />
-    </div>
+      <SoundToggle />
+    </TintedBackground>
   );
 }

@@ -5,16 +5,14 @@ import Image from 'next/image';
 import spotifyLogo from '../../../public/spotify.svg';
 
 export function SpotifySignInButton() {
-  const handleClick = () => {
-    signIn('spotify');
-  };
   return (
     <button
-      onClick={handleClick}
-      className="w-96 h-9 flex justify-center items-center my-10 p-4 bg-green-500 rounded-md"
+      type="button"
+      onClick={() => signIn('spotify', { callbackUrl: '/wallpaper' })}
+      className="flex w-full max-w-xs items-center justify-center gap-2 rounded-full bg-green-500 px-6 py-3 font-bold text-white transition hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-300"
     >
-      <Image src={spotifyLogo} alt="Spotify Logo" width={20} height={20} />
-      <span className="text-white font-semibold ml-2">Criar com Spotify</span>
+      <Image src={spotifyLogo} alt="" width={20} height={20} />
+      Desvirar as minhas
     </button>
   );
 }

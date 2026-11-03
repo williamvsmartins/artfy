@@ -1,5 +1,7 @@
 import { Inter } from 'next/font/google';
 
+import { AudioPreviewProvider } from '@/components/AudioPreview/AudioPreviewProvider';
+
 import { NextAuthProvider } from './providers';
 
 import TanstackProvider from '@/providers/TanstackProvider';
@@ -17,7 +19,9 @@ export default function RootLayout({
     <html lang="pt-br" className={`${font.className} bg-neutral-900`}>
       <body>
         <TanstackProvider>
-          <NextAuthProvider>{children}</NextAuthProvider>
+          <NextAuthProvider>
+            <AudioPreviewProvider>{children}</AudioPreviewProvider>
+          </NextAuthProvider>
         </TanstackProvider>
       </body>
     </html>

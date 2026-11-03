@@ -1,33 +1,12 @@
 import { extractColors } from 'extract-colors';
 import Jimp from 'jimp';
 
-export const extractDominantColors = async (
-  imageUrls: string[]
-): Promise<string[]> => {
-  const promises = imageUrls.map((imageUrl) => {
-    return new Promise<string>((resolve, reject) => {
-      Jimp.read(imageUrl)
-        .then((image) => {
-          const { data, width, height } = image.bitmap;
-          const pixels = Array.from(data);
-          extractColors({ data: pixels, width, height })
-            .then((colors) => {
-              resolve(
-                chooseMostSaturatedColor(colors.map((color) => color.hex))
-              );
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  });
-
-  return Promise.all(promises);
-};
+export async function extractDominantColor(imageUrl: string): Promise<string> {
+  const image = await Jimp.read(imageUrl);
+  const { data, width, height } = image.bitmap;
+  const colors = await extractColors({ data: Array.from(data), width, height });
+  return chooseMostSaturatedColor(colors.map((color) => color.hex));
+}
 
 const hexToRgb = (hex: string) => {
   hex = hex.replace(/^#/, '');

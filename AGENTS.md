@@ -1,19 +1,19 @@
 # Instruções do repositório
 
-Artfy (`williamvsmartins/artfy`) é um projeto pessoal: o usuário entra com a conta do Spotify e o site gera wallpapers a partir das músicas mais ouvidas dele, com a cor dominante de cada capa. Sem login, a home mostra um carrossel com dados de exemplo.
+Artfy (`williamvsmartins/artfy`) é um projeto pessoal: o usuário entra com a conta do Spotify e o site gera wallpapers a partir das músicas mais ouvidas dele, com a cor dominante de cada capa. Sem login, a home mostra um wallpaper real com as mais tocadas do Brasil (Deezer) e as cartas da pessoa viradas, e `/montar` deixa qualquer pessoa montar o seu escolhendo músicas. Todo wallpaper vira uma polaroid 9:16 para o story.
 
 ## Stack
 
-| Camada       | Tecnologia                                                                |
-| ------------ | ------------------------------------------------------------------------- |
-| Framework    | Next.js 14 (App Router), React 18, TypeScript `strict`                    |
-| Estilo       | Tailwind CSS 3                                                            |
-| Autenticação | next-auth 4 com `SpotifyProvider` (escopo `user-top-read`), sessão em JWT |
-| Dados        | axios + TanStack Query 5 (prefetch no server, `HydrationBoundary`)        |
-| Imagem       | jimp + extract-colors para a cor dominante da capa (roda no server)       |
-| Carrossel    | Swiper 11                                                                 |
-| Pacotes      | npm (`package-lock.json`). Não introduzir yarn ou pnpm                    |
-| Runtime      | Node 26 (`engines` no `package.json`; a Vercel descontinuou o Node 20)    |
+| Camada       | Tecnologia                                                                                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework    | Next.js 14 (App Router), React 18, TypeScript `strict`                                                                                                                              |
+| Estilo       | Tailwind CSS 3                                                                                                                                                                      |
+| Autenticação | next-auth 4 com `SpotifyProvider` (escopo `user-top-read`), sessão em JWT                                                                                                           |
+| Dados        | Spotify Web API (top tracks), API pública do Deezer (chart, busca, preview) e iTunes Search (preview reserva), sempre chamadas no servidor; TanStack Query só na busca do `/montar` |
+| Imagem       | jimp + extract-colors para a cor dominante da capa; `next/og` + `qrcode` para a polaroid do story (tudo no server)                                                                  |
+| Carrossel    | Swiper 11                                                                                                                                                                           |
+| Pacotes      | npm (`package-lock.json`). Não introduzir yarn ou pnpm                                                                                                                              |
+| Runtime      | Node 26 (`engines` no `package.json`; a Vercel descontinuou o Node 20)                                                                                                              |
 
 ## Comandos
 
@@ -22,26 +22,31 @@ Artfy (`williamvsmartins/artfy`) é um projeto pessoal: o usuário entra com a c
 - `npm run lint:fix` — eslint com `--fix`
 - `npm run tsc:check` — typecheck sem emitir
 - `npm run build` — build de produção (é o que o deploy roda)
-- Não há suíte de testes. Ao criar o primeiro teste, adicionar o script `test` e documentar aqui.
+- `npm test` — `node --test` com `--experimental-strip-types` em `src/**/*.test.mjs`. O teste fica ao lado do módulo e importa o `.ts` com extensão; por isso módulos testados só podem ter `import type` (o runner não resolve `@/` nem import sem extensão). Lógica pura vai para um módulo assim; o resto se verifica no navegador.
 
 ## Estrutura
 
-| Necessidade                                  | Local                                           |
-| -------------------------------------------- | ----------------------------------------------- |
-| página, layout, route handler                | `src/app` (`/` home, `/wallpaper` logado)       |
-| configuração do next-auth e guarda de sessão | `src/lib/auth.ts` (`loginIsRequiredServer`)     |
-| cliente HTTP do Spotify                      | `src/services/api.ts` (base URL por `NODE_ENV`) |
-| chamada de um recurso da API e seus tipos    | `src/services/http/<recurso>/{index,types}.ts`  |
-| hook de dados                                | `src/hooks/use<Nome>.ts`                        |
-| componente                                   | `src/components/<Nome>/index.tsx` (PascalCase)  |
-| subcomponente de um único componente         | `src/components/<Pai>/components/<Nome>/`       |
-| provider client-side                         | `src/providers` e `src/app/providers.tsx`       |
-| dados de exemplo da home                     | `src/lib/sampleTracks.json`                     |
+| Necessidade                                  | Local                                                                                               |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| página, layout, route handler                | `src/app` (`/` home, `/wallpaper` logado, `/montar` sem login)                                      |
+| rotas de API                                 | `src/app/api/{preview/[key],search,tracks,share}`                                                   |
+| configuração do next-auth e guarda de sessão | `src/lib/auth.ts` (`loginIsRequiredServer`); tipos da sessão em `src/types/next-auth.d.ts`          |
+| modelo único de música                       | `src/types/track.ts` (`Track`) e `src/lib/tracks/mappers.ts`                                        |
+| clientes das APIs externas                   | `src/lib/{spotify,deezer,itunes}.ts`; chart e busca por id com cache em `src/lib/tracks/catalog.ts` |
+| validação de parâmetros e períodos           | `src/lib/params.ts`                                                                                 |
+| player de preview, gesto e fundo tingido     | `src/components/AudioPreview/` e `src/lib/audio/gesture.ts`                                         |
+| polaroid do story                            | `src/lib/share/` e `src/app/api/share/route.tsx`                                                    |
+| componente                                   | `src/components/<Nome>/index.tsx` (PascalCase)                                                      |
+| subcomponente de um único componente         | `src/components/<Pai>/components/<Nome>/` ou arquivo irmão                                          |
+| provider client-side                         | `src/providers`, `src/app/providers.tsx` e `AudioPreviewProvider`                                   |
 
 ## Convenções
 
 - Server component por padrão. `'use client'` só no menor componente que usa hook, evento ou API do navegador.
-- A `queryKey` de top tracks é `['topTracks', period]` e precisa ser a mesma no prefetch de `src/app/wallpaper/page.tsx` e em `useTopTracks`, senão a hidratação vira um segundo request.
+- Dados de música chegam ao client por props do server já como `Track`. O client não chama Spotify nem Deezer direto; o token do Spotify só é lido no server, e a sessão expõe apenas `accessToken` e `error`.
+- Áudio só pelo `AudioPreviewProvider` (dois `<audio>` com crossfade). O `src` é sempre `/api/preview/<previewKey>`, porque as URLs do Deezer expiram em ~20 min.
+- Hover e escala dos cards ficam em CSS (`.wall-card` em `globals.css`), não em estado React; só o card tocando re-renderiza.
+- Estado lido de `localStorage` ou de um store externo não pode aparecer no HTML do servidor: use `INITIAL_STATE` no `getServerSnapshot`.
 - Imports são ordenados pelo `import-helpers/order-imports` do `.eslintrc.json`; rode `npm run lint:fix` em vez de ordenar na mão.
 - Prettier: aspas simples, ponto e vírgula, sem trailing comma.
 - Alias `@/` aponta para `src/`.
@@ -55,4 +60,5 @@ Artfy (`williamvsmartins/artfy`) é um projeto pessoal: o usuário entra com a c
 - Nunca comitar `.env` nem imprimir seus valores. As variáveis esperadas estão em `.env.example`.
 - Não expor token de acesso do Spotify nem dados reais de um usuário em log, exemplo ou screenshot.
 - `git push` direto na `main` é bloqueado por hook para o Claude. O push é do William.
-- O app no Spotify está em modo de desenvolvimento: só contas cadastradas no dashboard do Spotify conseguem logar.
+- O app no Spotify está em modo de desenvolvimento: só contas cadastradas no dashboard do Spotify conseguem logar. Quem não está cadastrado recebe 403 e é levado para `/montar?motivo=spotify`.
+- `NEXT_PUBLIC_SITE_URL` (padrão `https://artfy.vercel.app`) define o endereço e o QR da polaroid.

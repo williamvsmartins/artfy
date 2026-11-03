@@ -12,6 +12,7 @@
     "lint": "eslint src --max-warnings=0",
     "lint:fix": "eslint src --fix --max-warnings=0",
     "tsc:check": "tsc --noEmit --pretty",
+    "test": "node --no-warnings --experimental-strip-types --test \"src/**/*.test.mjs\"",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "next": "^14.2.3",
     "next-auth": "^4.24.5",
     "postcss": "8.4.29",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^4.12.0",
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "@types/get-pixels": "^3.3.4",
+    "@types/qrcode": "^1.5.6",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "eslint": "^8.49.0",
